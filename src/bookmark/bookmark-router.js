@@ -11,7 +11,27 @@ bookmarkRouter
   .get((req, res) => {
     res.json(bookmarks);
   })
-  .post(bodyParser, (req, res) => {});
+  .post(bodyParser, (req, res) => {
+    const {
+      title,
+      url,
+      rating = 'none',
+      desc = 'none'
+    } = req.body;
+    if (!title || !url) {
+      logger.error(
+        'title and URL field is required'
+      );
+      return res
+        .status(400)
+        .send(
+          'Bad Request: title and URL are required fields'
+        );
+    }
+    //need to validate for real url
+    //push new bookmark
+    //send response with newly created bookmark location
+  });
 
 bookmarkRouter
   .route('/bookmarks/:id')
