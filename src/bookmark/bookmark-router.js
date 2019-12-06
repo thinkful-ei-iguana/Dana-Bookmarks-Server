@@ -30,6 +30,22 @@ bookmarkRouter
     }
     res.status(200).json(bookmark);
   })
-  .delete((req, res) => {});
+  .delete((req, res) => {
+    const { id } = req.params;
+    const index = bookmarks.findIndex(
+      bookmark => bookmark.id === id
+    );
+    //validate the index existence
+    if (index === -1) {
+      logger.error(
+        `Bookmark wit id ${id} was not found`
+      );
+      return res
+        .status(404)
+        .send('Not Found');
+    }
+    bookmarks.splice(index, 1);
+    res.status(204).end();
+  });
 
 module.exports = bookmarkRouter;
