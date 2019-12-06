@@ -12,7 +12,7 @@ bookmarkRouter
     res.json(bookmarks);
   })
   .post(bodyParser, (req, res) => {
-    const {
+    let {
       title,
       url,
       rating = 'none',
@@ -28,9 +28,63 @@ bookmarkRouter
           'Bad Request: title and URL are required fields'
         );
     }
+    //need to validate for rating being a number and also being between 1 and 5
+    if (rating !== 'none') {
+      rating = parseFloat(rating);
+      if (isNaN(rating)) {
+        logger.error(
+          'rating must be a number'
+        );
+        return res
+          .status(400)
+          .send(
+            'bad request: rating must be number'
+          );
+      }
+      if (rating < 1 || rating > 5) {
+        logger.error(
+          'rating must be a number between 1 and 5'
+        );
+        return res
+          .status(400)
+          .send(
+            'bad request: rating is out of bounds'
+          );
+      }
+      rating = String(rating);
+    }
     //need to validate for real url
+    if (
+      !url.match(
+        /^http:\/\/|https:\/\//
+      )
+    ) {
+      logger.error(
+        'title and URL field is required'
+      );
+      return res
+        .status(400)
+        .send(
+          'Bad Request: URL must have http:// or https:// to be valid'
+        );
+    }
     //push new bookmark
+    const id = uuid();
+    const bookmark = {
+      id,
+      title,
+      url,
+      rating,
+      desc
+    };
+    bookmarks.push(bookmark);
     //send response with newly created bookmark location
+    res
+      .status(201)
+      .location(
+        `http://localhost:8000/bookmarks/${id}`
+      )
+      .json(bookmark);
   });
 
 bookmarkRouter
