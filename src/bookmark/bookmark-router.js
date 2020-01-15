@@ -79,7 +79,7 @@ bookmarkRouter
     };
     bookmarks.push(bookmark);
     //send response with newly created bookmark location
-    res
+    return res
       .status(201)
       .location(
         `http://localhost:8000/bookmarks/${id}`
